@@ -1,0 +1,43 @@
+Elementos léxicos:
+	Símbolo: Caractere.
+	->
+	{
+	,
+	}
+	;
+	(
+	)
+	=
+	Comentários devem ser ignorados.
+
+
+Gramática:
+	<Símbolo> := [A-Z] | [a-z] | [0-9]
+
+	<Nome> := <Símbolo> | <Nome> <Símbolo>
+
+	<Estado> := <Nome>
+	
+	<Estados> := <Estado> , <Estados> | <Estado>
+
+	<Transição> := ( <Estado> , <Símbolo> ) = <Estado>
+
+	<Transições> := <Transição> , <Transições> | <Transição>
+
+	<Simbolos> := <Simbolo> , <Simbolos> | <Simbolo>
+
+	<Alfabeto> := A -> { <Simbolos> };
+
+	<EstadosM> := E -> { <Estados> };
+
+	<TransiçõesM> := T -> { <Transições> };
+
+	<Inicial> := i -> <Estado>;
+
+	<Finais> := F -> { <Estados> };
+
+	<Máquina> := <Nome> { <EstadosM> <TransiçõesM> <Inicial> <Finais> }
+
+	<Máquinas> := <Máquina> <Máquinas> | <Máquina>
+
+	<Programa> := <Alfabeto> <Máquinas>

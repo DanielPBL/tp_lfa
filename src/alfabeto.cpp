@@ -21,3 +21,7 @@ bool Alfabeto::pertence(string simbolo) {
 
 	return false;
 }
+
+list<string> Alfabeto::getSimbolos() {
+	return this->alfabeto;
+}

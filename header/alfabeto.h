@@ -13,6 +13,7 @@ public:
 	Alfabeto(std::list<std::string>);
 	void adicionarSimbolo(std::string simbolo);
 	bool pertence(std::string simbolo);
+	std::list<std::string> getAlfabeto();
 };
 
 #endif // ifndef __ALFABETO_H__

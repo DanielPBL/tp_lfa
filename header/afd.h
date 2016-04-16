@@ -20,7 +20,11 @@ public:
 	bool possuiEstado(Estado*);
 	Estado* realizaTransicao(Estado*, std::string);
 	void gerarDot();
+	void setNome(std::string);
 	std::string getNome();
+	Estado* getInicial();
+	static AFD* intersecao(ADF*, AFD*);
+	static AFD* produto(ADF*, AFD*);
 };
 
 #endif // ifndef __AFD_H__

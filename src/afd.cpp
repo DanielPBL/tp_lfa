@@ -1,4 +1,5 @@
 #include "afd.h"
+#include "globals.h"
 #include <fstream>
 
 using namespace std;
@@ -102,6 +103,32 @@ void AFD::gerarDot() {
 		arq.close();
 }
 
+void AFD::setNome(string nome) {
+	this->nome = nome;
+}
+
 string AFD::getNome() {
 	return this->nome;
+}
+
+Estado* AFD::getInicial() {
+	return this->inicial;
+}
+
+AFD* AFD::produto(ADF* m1, AFD* m2) {
+	list<Estado*> estados = list<Estado*>();
+	list<Estado*>::iterator it;
+	list<string> alfabeto = global::alfabeto.getAlfabeto();
+	list<string>::iterator alf;
+	Estado *inicial = new Estado(m1->getInicial()->getNome() + "," + m1->getInicial()->getNome());
+
+	estados.push_back(inicial);
+	for (it = estados.begin(); it != estados.end(); ++it)
+		for (alf = alfabeto.begin(); alf != alfabeto.end(); ++alf) {
+			Estado *estado = new Estado(m1->realizaTransicao);
+		}
+}
+
+AFD* AFD::intersecao(ADF* m1, AFD* m2) {
+	return NULL;
 }

@@ -15,6 +15,13 @@ AFD::~AFD() {
 		delete *iTran;
 }
 
+AFD::AFD(string nome, Estado *inicial) : nome(nome), inicial(inicial) {
+	this->estados = list<Estado*>();
+	this->estados.push_back(inicial);
+	this->transicoes = list<Transicao*>();
+	this->finais = list<Estado*>();
+}
+
 AFD::AFD(std::string nome, std::list<Estado*> estados, std::list<Transicao*> transicoes, Estado *estadoInicial, 
 	std::list<Estado*> estadosFinais) : nome(nome), estados(estados), transicoes(transicoes) {
 	list<Estado*>::iterator iEst, iFinais;
@@ -47,6 +54,14 @@ AFD::AFD(std::string nome, std::list<Estado*> estados, std::list<Transicao*> tra
 				this->finais.push_back(*iEst);
 			}
 
+		if (existe)
+			for (iTran = this->transicoes.begin(); iTran != this->transicoes.end(); ++iTran) {
+				if (*((*iTran)->getPartida()) == **iFinais)
+					((*iTran)->getPartida())->setFinal(true);
+				if (*((*iTran)->getChegada()) == **iFinais)
+					((*iTran)->getChegada())->setFinal(true);
+			}
+
 		if (!existe) 
 			throw string("Erro na máquina [" + nome + "]: Estado final [" + (*iFinais)->getNome() + "] inválido.\n");
 
@@ -55,11 +70,23 @@ AFD::AFD(std::string nome, std::list<Estado*> estados, std::list<Transicao*> tra
 
 }
 
+void AFD::adicionaEstado(Estado *estado) {
+	if (!this->possuiEstado(estado)) {
+		this->estados.push_back(estado);
+		if (estado->isFinal())
+			this->finais.push_back(estado);
+	}
+}
+
+void AFD::adicionaTransicao(Transicao *Transicao) {
+	this->transicoes.push_back(Transicao);
+}
+
 bool AFD::possuiEstado(Estado *e) {
 	list<Estado*>::iterator i;
 
 	for (i = this->estados.begin(); i != this->estados.end(); ++i)
-		if ((**i) == *e)
+		if (**i == *e)
 			return true;
 
 	return false;
@@ -69,7 +96,7 @@ Estado* AFD::realizaTransicao(Estado *e, string sim) {
 	list<Transicao*>::iterator i;
 
 	for (i = this->transicoes.begin(); i != this->transicoes.end(); ++i)
-		if ((*i)->getPartida() == e && (*i)->getSimbolo() == sim)
+		if (*((*i)->getPartida()) == *e && (*i)->getSimbolo() == sim)
 			return (*i)->getChegada();
 
 	return new Estado("");
@@ -115,20 +142,65 @@ Estado* AFD::getInicial() {
 	return this->inicial;
 }
 
-AFD* AFD::produto(ADF* m1, AFD* m2) {
-	list<Estado*> estados = list<Estado*>();
-	list<Estado*>::iterator it;
-	list<string> alfabeto = global::alfabeto.getAlfabeto();
-	list<string>::iterator alf;
-	Estado *inicial = new Estado(m1->getInicial()->getNome() + "," + m1->getInicial()->getNome());
-
-	estados.push_back(inicial);
-	for (it = estados.begin(); it != estados.end(); ++it)
-		for (alf = alfabeto.begin(); alf != alfabeto.end(); ++alf) {
-			Estado *estado = new Estado(m1->realizaTransicao);
-		}
+std::list<Estado*> AFD::getEstados() {
+	return this->estados;
 }
 
-AFD* AFD::intersecao(ADF* m1, AFD* m2) {
-	return NULL;
+std::list<Transicao*> AFD::getTransicoes() {
+	return this->transicoes;
+}
+
+AFD* AFD::produto(AFD* m1, AFD* m2, Operacao op) {
+	list<string> alfabeto = global::alfabeto.getAlfabeto();
+	list<string>::iterator alf;
+
+	EstadoComposto *inicial = new EstadoComposto();
+	inicial->e1 = m1->getInicial();
+	inicial->e2 = m2->getInicial();
+	inicial->comp = new Estado(m1->getInicial()->getNome() + "," + m2->getInicial()->getNome());
+
+	AFD *produto;
+	if (op == INTERSECAO)
+		produto = new AFD("intersecao", inicial->comp);
+	else
+		produto = new AFD("uniao", inicial->comp);
+
+	list<EstadoComposto*> novosEstados = list<EstadoComposto*>();
+	novosEstados.push_back(inicial);
+	list<EstadoComposto*>::iterator it = novosEstados.begin();
+	while (it != novosEstados.end()) {
+		EstadoComposto *ec = *it;
+
+		for (alf = alfabeto.begin(); alf != alfabeto.end(); ++alf) {
+			Estado *eM1 = m1->realizaTransicao(ec->e1, *alf), *eM2 = m2->realizaTransicao(ec->e2, *alf);
+			EstadoComposto *novoEstado = new EstadoComposto();
+			novoEstado->e1 = eM1;
+			novoEstado->e2 = eM2;
+			novoEstado->comp = new Estado(eM1->getNome() + "," + eM2->getNome());
+
+			if (!produto->possuiEstado(novoEstado->comp)) {
+				if (op == INTERSECAO && novoEstado->e1->isFinal() && novoEstado->e2->isFinal())
+					novoEstado->comp->setFinal(true);
+				if (op == UNIAO && (novoEstado->e1->isFinal() || novoEstado->e2->isFinal()))
+					novoEstado->comp->setFinal(true);
+				
+				produto->adicionaEstado(novoEstado->comp);
+				novosEstados.push_back(novoEstado);
+			}
+
+			produto->adicionaTransicao(new Transicao(ec->comp, *alf, novoEstado->comp));
+		}
+		delete *it;
+		++it;
+	}
+
+	return produto;
+}
+
+AFD* AFD::intersecao(AFD* m1, AFD* m2) { 
+	return AFD::produto(m1, m2, INTERSECAO);
+}
+
+AFD* AFD::uniao(AFD *m1, AFD *m2) {
+	return AFD::produto(m1, m2, UNIAO);
 }

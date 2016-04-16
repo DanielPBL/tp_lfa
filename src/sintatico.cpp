@@ -58,10 +58,27 @@ void AnalisadorSintatico::procPrograma() {
 
 	this->matchToken(FIM_ARQ_NORMAL);
 
-	for (it = global::maquinas.begin(); it != global::maquinas.end(); ++it) {
+	for (it = global::maquinas.begin(); it != global::maquinas.end(); ++it) 
 		(*it)->gerarDot();
+
+	AFD *intersecao, *uniao;
+
+	it = global::maquinas.begin();
+	intersecao = AFD::intersecao(*(global::maquinas.begin()), *(++it));
+	it = global::maquinas.begin();
+	uniao = AFD::uniao(*(global::maquinas.begin()), *(++it));
+
+	for (++it; it != global::maquinas.end(); ++it) {
+		AFD *delInt = intersecao, *delUni = uniao;
+		intersecao = AFD::intersecao(intersecao, *it);
+		uniao = AFD::uniao(uniao, *it);
+		delete delInt;
+		delete delUni;
 		delete *it;
 	}
+
+	intersecao->gerarDot();
+	uniao->gerarDot();
 }
 
 Alfabeto AnalisadorSintatico::procAlfabeto() {

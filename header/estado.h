@@ -10,6 +10,7 @@ private:
 
 public:
 	Estado(std::string);
+	Estado(std::string, bool);
 	friend bool operator == (const Estado&, const Estado&);
 	bool isFinal();
 	void setFinal(bool);

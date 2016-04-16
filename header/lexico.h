@@ -5,7 +5,6 @@
 #include <string>
 #include <map>
 
-#define GERADOR_EXCESSOES  -3
 #define FIM_ARQ_INESPERADO -2
 #define TOKEN_INVALIDO     -1
 #define FIM_ARQ_NORMAL     0

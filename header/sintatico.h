@@ -29,7 +29,7 @@ private:
 	Estado* procInicial();
 	std::list<Estado*> procFinais();
 	AFD* procMaquina();
-	std::list<AFD*> procMaquinas();
+	void procMaquinas();
 	void procPrograma();
 };
 

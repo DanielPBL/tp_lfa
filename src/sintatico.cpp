@@ -2,7 +2,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
-#include <iostream>
 
 using namespace std;
 
@@ -48,36 +47,26 @@ void AnalisadorSintatico::init() {
 }
 
 void AnalisadorSintatico::procPrograma() {
-	list<AFD*> maquinas = list<AFD*>(), novasMaquinas;
 	list<AFD*>::iterator it;
 
+	global::maquinas  = list<AFD*>();
 	global::alfabeto = this->procAlfabeto();
 
-	maquinas.push_back(this->procMaquina());
+	global::maquinas.push_back(this->procMaquina());
 
-	novasMaquinas = this->procMaquinas();
-	maquinas.splice(maquinas.end(), novasMaquinas);
-
-	for (it = maquinas.begin(); it != maquinas.end(); ++it) {
-		list<AFD*>::iterator itInt;
-		for (itInt = maquinas.begin(); itInt != maquinas.end(); ++itInt)
-			if ((*it)->getNome() == (*itInt)->getNome() && *it != *itInt)
-				throw string("Dupla declaração para a máquina [" + (*it)->getNome() + "]");
-	}
+	this->procMaquinas();
 
 	this->matchToken(FIM_ARQ_NORMAL);
 
-	for (it = maquinas.begin(); it != maquinas.end(); ++it) {
+	for (it = global::maquinas.begin(); it != global::maquinas.end(); ++it) {
 		(*it)->gerarDot();
 		delete *it;
 	}
 }
 
 Alfabeto AnalisadorSintatico::procAlfabeto() {
-	if (this->atual.token != "A") {
-		this->matchToken(GERADOR_EXCESSOES);
-		return Alfabeto();
-	}
+	if (this->atual.token != "A")
+		this->lancaExcessao("Lexema não esperado [" + this->atual.token + "]");
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);
@@ -125,6 +114,13 @@ string AnalisadorSintatico::procNome() {
 
 AFD* AnalisadorSintatico::procMaquina() {
 	string nome = this->procNome();
+
+	list<AFD*>::iterator it;
+
+	for (it = global::maquinas.begin(); it != global::maquinas.end(); ++it)
+		if ((*it)->getNome() == nome)
+			this->lancaExcessao("Dupla declaração para a máquina [" + nome + "]");
+
 	this->matchToken(ABRE_CHAVES);
 
 	list<Estado*> estados = this->procEstadosM();
@@ -137,24 +133,16 @@ AFD* AnalisadorSintatico::procMaquina() {
 	return new AFD(nome, estados, transicoes, estadoInicial, estadosFinais);
 }
 
-list<AFD*> AnalisadorSintatico::procMaquinas() {
-	list<AFD*> maquinas = list<AFD*>();
+void AnalisadorSintatico::procMaquinas() {
+	global::maquinas.push_back(this->procMaquina());
 
-	maquinas.push_back(this->procMaquina());
-
-	if (this->atual.tipo == SIMBOLO) {
-		list<AFD*> novasMaquinas = this->procMaquinas();
-		maquinas.splice(maquinas.end(), novasMaquinas);
-	}
-
-	return maquinas;
+	if (this->atual.tipo == SIMBOLO)
+		this->procMaquinas();
 }
 
 list<Estado*> AnalisadorSintatico::procEstadosM() {
-	if (this->atual.token != "E") {
-		this->matchToken(GERADOR_EXCESSOES);
-		return list<Estado*>();
-	}
+	if (this->atual.token != "E")
+		this->lancaExcessao("Lexema não esperado [" + this->atual.token + "]");
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);
@@ -190,10 +178,8 @@ Estado* AnalisadorSintatico::procEstado() {
 }
 
 list<Transicao*> AnalisadorSintatico::procTransicoesM() {
-	if (this->atual.token != "T") {
-		this->matchToken(GERADOR_EXCESSOES);
-		return list<Transicao*>();
-	}
+	if (this->atual.token != "T")
+		this->lancaExcessao("Lexema não esperado [" + this->atual.token + "]");
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);
@@ -243,10 +229,8 @@ Transicao* AnalisadorSintatico::procTransicao() {
 }
 
 Estado* AnalisadorSintatico::procInicial() {
-	if (this->atual.token != "i") {
-		this->matchToken(GERADOR_EXCESSOES);
-		return new Estado("");
-	}
+	if (this->atual.token != "i")
+		this->lancaExcessao("Lexema não esperado [" + this->atual.token + "]");
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);
@@ -257,10 +241,8 @@ Estado* AnalisadorSintatico::procInicial() {
 }
 
 list<Estado*> AnalisadorSintatico::procFinais() {
-	if (this->atual.token != "F") {
-		this->matchToken(GERADOR_EXCESSOES);
-		return list<Estado*>();
-	}
+	if (this->atual.token != "F")
+		this->lancaExcessao("Lexema não esperado [" + this->atual.token + "]");
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);

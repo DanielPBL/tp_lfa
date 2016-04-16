@@ -16,12 +16,3 @@ M2 {
 	i -> A; // Estado inicial.
 	F -> {B}; //Estados finais.	
 }
-
-
-// Descrĩção da máquina 2 cujo nome é M2.
-M3 {
-	E -> {A};  // Estados (1 ou mais símbolos).
-	T -> {}; // Transições.
-	i -> A; // Estado inicial.
-	F -> {A}; //Estados finais.	
-}

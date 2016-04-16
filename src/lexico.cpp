@@ -8,11 +8,13 @@ AnalisadorLexico::AnalisadorLexico(char *arquivo) {
 	this->linha = 1;
 	this->criarTabelaSimbolos();
 
-	if (!this->arquivo.is_open()) throw string("Erro ao abrir o arquivo!\n");
+	if (!this->arquivo.is_open())
+		throw string("Erro ao abrir o arquivo!\n");
 }
 
 AnalisadorLexico::~AnalisadorLexico() {
-	if (this->arquivo.is_open()) this->arquivo.close();
+	if (this->arquivo.is_open())
+		this->arquivo.close();
 }
 
 int AnalisadorLexico::getLinha() {

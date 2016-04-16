@@ -18,13 +18,13 @@ Gramática:
 
 	<Estado> := <Nome>
 	
-	<Estados> := <Estado> , <Estados> | <Estado>
+	<Estados> := <Estado> , <Estados> | <Estado> | <empty>
 
 	<Transição> := ( <Estado> , <Símbolo> ) = <Estado>
 
-	<Transições> := <Transição> , <Transições> | <Transição>
+	<Transições> := <Transição> , <Transições> | <Transição> | <empty>
 
-	<Simbolos> := <Simbolo> , <Simbolos> | <Simbolo>
+	<Simbolos> := <Simbolo> , <Simbolos> | <Simbolo> | <empty>
 
 	<Alfabeto> := A -> { <Simbolos> };
 
@@ -40,4 +40,4 @@ Gramática:
 
 	<Máquinas> := <Máquina> <Máquinas> | <Máquina>
 
-	<Programa> := <Alfabeto> <Máquinas>
+	<Programa> := <Alfabeto> <Máquina> <Máquinas>

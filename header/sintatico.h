@@ -18,18 +18,18 @@ public:
 private:
 	void lancaExcessao(std::string);
 	std::string procNome();
-	Estado procEstado();
-	std::list<Estado> procEstados();
-	Transicao procTransicao();
-	std::list<Transicao> procTransicoes();
+	Estado* procEstado();
+	std::list<Estado*> procEstados();
+	Transicao* procTransicao();
+	std::list<Transicao*> procTransicoes();
 	std::list<std::string> procSimbolos();
 	Alfabeto procAlfabeto();
-	std::list<Estado> procEstadosM();
-	std::list<Transicao> procTransicoesM();
-	Estado procInicial();
-	std::list<Estado> procFinais();
-	AFD procMaquina();
-	std::list<AFD> procMaquinas();
+	std::list<Estado*> procEstadosM();
+	std::list<Transicao*> procTransicoesM();
+	Estado* procInicial();
+	std::list<Estado*> procFinais();
+	AFD* procMaquina();
+	std::list<AFD*> procMaquinas();
 	void procPrograma();
 };
 

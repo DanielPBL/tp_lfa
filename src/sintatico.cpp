@@ -48,13 +48,29 @@ void AnalisadorSintatico::init() {
 }
 
 void AnalisadorSintatico::procPrograma() {
-	list<AFD> maquinas = list<AFD>(), novasMaquinas;
+	list<AFD*> maquinas = list<AFD*>(), novasMaquinas;
+	list<AFD*>::iterator it;
 
 	global::alfabeto = this->procAlfabeto();
+
 	maquinas.push_back(this->procMaquina());
+
 	novasMaquinas = this->procMaquinas();
 	maquinas.splice(maquinas.end(), novasMaquinas);
+
+	for (it = maquinas.begin(); it != maquinas.end(); ++it) {
+		list<AFD*>::iterator itInt;
+		for (itInt = maquinas.begin(); itInt != maquinas.end(); ++itInt)
+			if ((*it)->getNome() == (*itInt)->getNome() && *it != *itInt)
+				throw string("Dupla declaração para a máquina [" + (*it)->getNome() + "]");
+	}
+
 	this->matchToken(FIM_ARQ_NORMAL);
+
+	for (it = maquinas.begin(); it != maquinas.end(); ++it) {
+		(*it)->gerarDot();
+		delete *it;
+	}
 }
 
 Alfabeto AnalisadorSintatico::procAlfabeto() {
@@ -107,48 +123,44 @@ string AnalisadorSintatico::procNome() {
 	return nome;
 }
 
-AFD AnalisadorSintatico::procMaquina() {
+AFD* AnalisadorSintatico::procMaquina() {
 	string nome = this->procNome();
 	this->matchToken(ABRE_CHAVES);
 
-	list<Estado> estados = this->procEstadosM();
-	list<Transicao> transicoes = this->procTransicoesM();
-	Estado estadoInicial = this->procInicial();
+	list<Estado*> estados = this->procEstadosM();
+	list<Transicao*> transicoes = this->procTransicoesM();
+	Estado *estadoInicial = this->procInicial();
 
-	list<Estado> estadosFinais = this->procFinais();
+	list<Estado*> estadosFinais = this->procFinais();
 	this->matchToken(FECHA_CHAVES);
 
-	AFD afd = AFD(nome, estados, transicoes, estadoInicial, estadosFinais);
-
-	afd.gerarDot();
-
-	return afd;
+	return new AFD(nome, estados, transicoes, estadoInicial, estadosFinais);
 }
 
-list<AFD> AnalisadorSintatico::procMaquinas() {
-	list<AFD> maquinas = list<AFD>();
+list<AFD*> AnalisadorSintatico::procMaquinas() {
+	list<AFD*> maquinas = list<AFD*>();
 
 	maquinas.push_back(this->procMaquina());
 
 	if (this->atual.tipo == SIMBOLO) {
-		list<AFD> novasMaquinas = this->procMaquinas();
+		list<AFD*> novasMaquinas = this->procMaquinas();
 		maquinas.splice(maquinas.end(), novasMaquinas);
 	}
 
 	return maquinas;
 }
 
-list<Estado> AnalisadorSintatico::procEstadosM() {
+list<Estado*> AnalisadorSintatico::procEstadosM() {
 	if (this->atual.token != "E") {
 		this->matchToken(GERADOR_EXCESSOES);
-		return list<Estado>();
+		return list<Estado*>();
 	}
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);
 	this->matchToken(ABRE_CHAVES);
 
-	list<Estado> estados = this->procEstados();
+	list<Estado*> estados = this->procEstados();
 
 	this->matchToken(FECHA_CHAVES);
 	this->matchToken(PONTO_VIRGULA);
@@ -156,8 +168,8 @@ list<Estado> AnalisadorSintatico::procEstadosM() {
 	return estados;
 }
 
-list<Estado> AnalisadorSintatico::procEstados() {
-	list<Estado> estados = list<Estado>();
+list<Estado*> AnalisadorSintatico::procEstados() {
+	list<Estado*> estados = list<Estado*>();
 
 	if (this->atual.tipo != SIMBOLO)
 		return estados;
@@ -166,28 +178,28 @@ list<Estado> AnalisadorSintatico::procEstados() {
 
 	if (this->atual.tipo == VIRGULA) {
 		this->matchToken(VIRGULA);
-		list<Estado> novosEstados = this->procEstados();
+		list<Estado*> novosEstados = this->procEstados();
 		estados.splice(estados.end(), novosEstados);
 	}
 
 	return estados;
 }
 
-Estado AnalisadorSintatico::procEstado() {
-	return Estado(this->procNome());
+Estado* AnalisadorSintatico::procEstado() {
+	return new Estado(this->procNome());
 }
 
-list<Transicao> AnalisadorSintatico::procTransicoesM() {
+list<Transicao*> AnalisadorSintatico::procTransicoesM() {
 	if (this->atual.token != "T") {
 		this->matchToken(GERADOR_EXCESSOES);
-		return list<Transicao>();
+		return list<Transicao*>();
 	}
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);
 	this->matchToken(ABRE_CHAVES);
 
-	list<Transicao> transicoes = this->procTransicoes();
+	list<Transicao*> transicoes = this->procTransicoes();
 
 	this->matchToken(FECHA_CHAVES);
 	this->matchToken(PONTO_VIRGULA);
@@ -195,8 +207,8 @@ list<Transicao> AnalisadorSintatico::procTransicoesM() {
 	return transicoes;
 }
 
-list<Transicao> AnalisadorSintatico::procTransicoes() {
-	list<Transicao> transicoes = list<Transicao>();
+list<Transicao*> AnalisadorSintatico::procTransicoes() {
+	list<Transicao*> transicoes = list<Transicao*>();
 
 	if (this->atual.tipo != ABRE_PARENTESES)
 		return transicoes;
@@ -205,16 +217,16 @@ list<Transicao> AnalisadorSintatico::procTransicoes() {
 
 	if (this->atual.tipo == VIRGULA) {
 		this->matchToken(VIRGULA);
-		list<Transicao> novasTransicoes = this->procTransicoes();
+		list<Transicao*> novasTransicoes = this->procTransicoes();
 		transicoes.splice(transicoes.end(), novasTransicoes);
 	}
 
 	return transicoes;
 }
 
-Transicao AnalisadorSintatico::procTransicao() {
+Transicao* AnalisadorSintatico::procTransicao() {
 	this->matchToken(ABRE_PARENTESES);
-	Estado partida = this->procEstado();
+	Estado *partida = this->procEstado();
 	this->matchToken(VIRGULA);
 
 	string simbolo = this->atual.token;
@@ -225,35 +237,35 @@ Transicao AnalisadorSintatico::procTransicao() {
 
 	this->matchToken(FECHA_PARENTESES);
 	this->matchToken(IGUAL);
-	Estado chegada = this->procEstado();
+	Estado *chegada = this->procEstado();
 
-	return Transicao(partida, simbolo, chegada);
+	return new Transicao(partida, simbolo, chegada);
 }
 
-Estado AnalisadorSintatico::procInicial() {
+Estado* AnalisadorSintatico::procInicial() {
 	if (this->atual.token != "i") {
 		this->matchToken(GERADOR_EXCESSOES);
-		return Estado("");
+		return new Estado("");
 	}
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);
-	Estado estadoInicial = this->procEstado();
+	Estado *estadoInicial = this->procEstado();
 	this->matchToken(PONTO_VIRGULA);
 
 	return estadoInicial;
 }
 
-list<Estado> AnalisadorSintatico::procFinais() {
+list<Estado*> AnalisadorSintatico::procFinais() {
 	if (this->atual.token != "F") {
 		this->matchToken(GERADOR_EXCESSOES);
-		return list<Estado>();
+		return list<Estado*>();
 	}
 
 	this->matchToken(SIMBOLO);
 	this->matchToken(SETA);
 	this->matchToken(ABRE_CHAVES);
-	list<Estado> estadosFinais = this->procEstados();
+	list<Estado*> estadosFinais = this->procEstados();
 	this->matchToken(FECHA_CHAVES);
 	this->matchToken(PONTO_VIRGULA);
 

@@ -2,9 +2,14 @@
 
 using namespace std;
 
-Transicao::Transicao(Estado p, std::string s, Estado c) : partida(p), simbolo(s), chegada(c) {}
+Transicao::~Transicao() {
+	delete this->partida;
+	delete this->chegada;
+}
 
-Estado Transicao::getPartida() {
+Transicao::Transicao(Estado *p, std::string s, Estado *c) : partida(p), simbolo(s), chegada(c) {}
+
+Estado* Transicao::getPartida() {
 	return this->partida;
 }
 
@@ -12,15 +17,15 @@ std::string Transicao::getSimbolo() {
 	return this->simbolo;
 }
 
-Estado Transicao::getChegada() {
+Estado* Transicao::getChegada() {
 	return this->chegada;
 }
 
 string Transicao::toString() {
 	string transicao = "(";
-	transicao += this->partida.getNome();
+	transicao += this->partida->getNome();
 	transicao += ", " + this->simbolo + ") = ";
-	transicao += this->chegada.getNome();
+	transicao += this->chegada->getNome();
 
 	return transicao;
 }

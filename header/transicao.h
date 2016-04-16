@@ -6,15 +6,16 @@
 
 class Transicao {
 private:
-	Estado partida;
+	Estado *partida;
 	std::string simbolo;
-	Estado chegada;
+	Estado *chegada;
 
 public:
-	Transicao(Estado, std::string, Estado);
-	Estado getPartida();
+	Transicao(Estado*, std::string, Estado*);
+	~Transicao();
+	Estado* getPartida();
 	std::string getSimbolo();
-	Estado getChegada();
+	Estado* getChegada();
 	std::string toString();
 };
 

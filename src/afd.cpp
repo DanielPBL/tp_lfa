@@ -180,12 +180,12 @@ AFD* AFD::produto(AFD* m1, AFD* m2, Operacao op) {
 			novoEstado->e2 = eM2;
 			novoEstado->comp = new Estado(eM1->getNome() + "," + eM2->getNome());
 
-			if (!produto->possuiEstado(novoEstado->comp)) {
-				if (op == INTERSECAO && novoEstado->e1->isFinal() && novoEstado->e2->isFinal())
-					novoEstado->comp->setFinal(true);
-				if (op == UNIAO && (novoEstado->e1->isFinal() || novoEstado->e2->isFinal()))
-					novoEstado->comp->setFinal(true);
-				
+			if (op == INTERSECAO && novoEstado->e1->isFinal() && novoEstado->e2->isFinal())
+				novoEstado->comp->setFinal(true);
+			if (op == UNIAO && (novoEstado->e1->isFinal() || novoEstado->e2->isFinal()))
+				novoEstado->comp->setFinal(true);
+
+			if (!produto->possuiEstado(novoEstado->comp)) {				
 				produto->adicionaEstado(novoEstado->comp);
 				novosEstados.push_back(novoEstado);
 			}

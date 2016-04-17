@@ -180,6 +180,9 @@ AFD* AFD::produto(AFD* m1, AFD* m2, Operacao op) {
 			novoEstado->e2 = eM2;
 			novoEstado->comp = new Estado(eM1->getNome() + "," + eM2->getNome());
 
+			if (novoEstado->comp->getNome() == ",") //Não gerar um estado de Erro.
+				continue;
+
 			if (op == INTERSECAO && novoEstado->e1->isFinal() && novoEstado->e2->isFinal())
 				novoEstado->comp->setFinal(true);
 			if (op == UNIAO && (novoEstado->e1->isFinal() || novoEstado->e2->isFinal()))

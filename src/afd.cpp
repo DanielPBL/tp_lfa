@@ -167,13 +167,15 @@ AFD* AFD::produto(AFD* m1, AFD* m2, Operacao op) {
 
 	list<EstadoComposto*> novosEstados = list<EstadoComposto*>();
 	novosEstados.push_back(inicial);
-	list<EstadoComposto*>::iterator it = novosEstados.begin();
-	while (it != novosEstados.end()) {
+	list<EstadoComposto*>::iterator it;
+
+	for (it = novosEstados.begin(); it != novosEstados.end(); ++it) {
 		EstadoComposto *ec = *it;
 
 		for (alf = alfabeto.begin(); alf != alfabeto.end(); ++alf) {
 			Estado *eM1 = m1->realizaTransicao(ec->e1, *alf), *eM2 = m2->realizaTransicao(ec->e2, *alf);
 			EstadoComposto *novoEstado = new EstadoComposto();
+
 			novoEstado->e1 = eM1;
 			novoEstado->e2 = eM2;
 			novoEstado->comp = new Estado(eM1->getNome() + "," + eM2->getNome());
@@ -190,8 +192,6 @@ AFD* AFD::produto(AFD* m1, AFD* m2, Operacao op) {
 
 			produto->adicionaTransicao(new Transicao(ec->comp, *alf, novoEstado->comp));
 		}
-		delete *it;
-		++it;
 	}
 
 	return produto;

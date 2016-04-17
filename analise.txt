@@ -12,32 +12,38 @@ Elementos léxicos:
 
 
 Gramática:
-	<Símbolo> := [A-Z] | [a-z] | [0-9]
+	<Símbolo> ::= [A-Z] | [a-z] | [0-9]
 
-	<Nome> := <Símbolo> | <Nome> <Símbolo>
+	<Nome> ::= <Símbolo> | <Nome> <Símbolo>
 
-	<Estado> := <Nome>
+	<Estado> ::= <Nome>
+
+	<Estados> ::= <Estado> , <Estados> | <Estado>
 	
-	<Estados> := <Estado> , <Estados> | <Estado> | <empty>
+	<EstadosExt> ::= <Estados> | <empty>
 
-	<Transição> := ( <Estado> , <Símbolo> ) = <Estado>
+	<Transição> ::= ( <Estado> , <Símbolo> ) = <Estado>
 
-	<Transições> := <Transição> , <Transições> | <Transição> | <empty>
+	<Transições> ::= <Transição> , <Transições> | <Transição>
 
-	<Simbolos> := <Simbolo> , <Simbolos> | <Simbolo> | <empty>
+	<TransiçõesExt> ::= <Transições> | <empty>
 
-	<Alfabeto> := A -> { <Simbolos> };
+	<Simbolos> ::= <Simbolo> , <Simbolos> | <Simbolo>
 
-	<EstadosM> := E -> { <Estados> };
+	<SimbolosExt> ::= <Simbolos> | <empty>
 
-	<TransiçõesM> := T -> { <Transições> };
+	<Alfabeto> ::= A -> { <SimbolosExt> };
 
-	<Inicial> := i -> <Estado>;
+	<EstadosM> ::= E -> { <EstadosExt> };
 
-	<Finais> := F -> { <Estados> };
+	<TransiçõesM> ::= T -> { <TransiçõesExt> };
 
-	<Máquina> := <Nome> { <EstadosM> <TransiçõesM> <Inicial> <Finais> }
+	<Inicial> ::= i -> <Estado>;
 
-	<Máquinas> := <Máquina> <Máquinas> | <Máquina>
+	<Finais> ::= F -> { <EstadosExt> };
 
-	<Programa> := <Alfabeto> <Máquina> <Máquinas>
+	<Máquina> ::= <Nome> { <EstadosM> <TransiçõesM> <Inicial> <Finais> }
+
+	<Máquinas> ::= <Máquina> <Máquinas> | <Máquina>
+
+	<Programa> ::= <Alfabeto> <Máquina> <Máquinas>

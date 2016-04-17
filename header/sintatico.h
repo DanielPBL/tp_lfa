@@ -28,6 +28,9 @@ private:
 	std::list<Transicao*> procTransicoesM();
 	Estado* procInicial();
 	std::list<Estado*> procFinais();
+	std::list<Estado*> procEstadosExt();
+	std::list<Transicao*> procTransicoesExt();
+	std::list<std::string> procSimbolosExt();
 	AFD* procMaquina();
 	void procMaquinas();
 	void procPrograma();

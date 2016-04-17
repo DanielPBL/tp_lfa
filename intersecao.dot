@@ -1,0 +1,21 @@
+digraph "intersecao" {
+	_nil [style="invis"];
+	_nil -> "[A,A,A]" [label=""];
+	"[B,B,C]" [peripheries=2];
+	"[A,A,A]" -> "[B,A,B]" [label=0];
+	"[A,A,A]" -> "[,B,]" [label=1];
+	"[B,A,B]" -> "[B,A,]" [label=0];
+	"[B,A,B]" -> "[B,B,C]" [label=1];
+	"[,B,]" -> "[,A,]" [label=0];
+	"[,B,]" -> "[,B,]" [label=1];
+	"[B,A,]" -> "[B,A,]" [label=0];
+	"[B,A,]" -> "[B,B,]" [label=1];
+	"[B,B,C]" -> "[B,A,C]" [label=0];
+	"[B,B,C]" -> "[B,B,C]" [label=1];
+	"[,A,]" -> "[,A,]" [label=0];
+	"[,A,]" -> "[,B,]" [label=1];
+	"[B,B,]" -> "[B,A,]" [label=0];
+	"[B,B,]" -> "[B,B,]" [label=1];
+	"[B,A,C]" -> "[B,A,C]" [label=0];
+	"[B,A,C]" -> "[B,B,C]" [label=1];
+}

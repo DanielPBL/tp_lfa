@@ -8,6 +8,7 @@
 namespace global {
 	extern Alfabeto alfabeto;
 	extern std::list<AFD*> maquinas;
+	extern bool completo;
 }
 
 #endif // ifndef __GLOBALS_H__

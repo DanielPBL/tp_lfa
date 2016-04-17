@@ -15,7 +15,7 @@ OBJS=obj/lexico.o obj/sintatico.o obj/alfabeto.o obj/globals.o obj/estado.o obj/
 all: $(TARGET)
 
 clean:
-	$(RM) $(RMFLAGS) $(OBJS) $(TARGET) *.dot *.pdf tests/*
+	$(RM) $(RMFLAGS) $(OBJS) $(TARGET)
 
 run:	$(TARGET)
 	./build/gerador entrada.afd

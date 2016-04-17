@@ -9,7 +9,14 @@ using namespace std;
 
 int main(int argc, char **argv) {
 	if (argc < 2) {
-		cout << "Usar: gerador [AFD's de entrada]" << endl;
+		cout << "Usar: gerador [AFD's de entrada] [-c]" << endl;
+		return EXIT_FAILURE;
+	}
+
+	if (argc == 3 && string(argv[2]) == "-c")
+		global::completo = true;
+	else if (argc >= 3) {
+		cout << "Usar: gerador [AFD's de entrada] [-c]" << endl;
 		return EXIT_FAILURE;
 	}
 

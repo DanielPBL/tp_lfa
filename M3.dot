@@ -1,9 +1,0 @@
-digraph "M3" {
-	_nil [style="invis"];
-	_nil -> "[A]" [label=""];
-	"[C]" [peripheries=2];
-	"[A]" -> "[B]" [label=0];
-	"[B]" -> "[C]" [label=1];
-	"[C]" -> "[C]" [label=0];
-	"[C]" -> "[C]" [label=1];
-}

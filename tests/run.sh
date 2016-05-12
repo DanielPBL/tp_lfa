@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm *.dot *.pdf
+rm *.dot *.pdf &>/dev/null
 
 ../build/gerador $1 $2
 

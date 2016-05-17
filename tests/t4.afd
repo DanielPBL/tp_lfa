@@ -1,0 +1,26 @@
+// Alfabeto das máquinas (somente 1 símbolo).
+A -> {0, 1};
+
+// Descrição da máquina 1 cujo nome é M1.
+C01 {
+	E -> {A, B, C};  // Estados (1 ou mais símbolos).
+	T -> { (A, 0) = B, 
+		   (B, 1) = C, 
+		   (C, 0) = C, 
+		   (C, 1) = C }; // Transições.
+	i -> A; // Estado inicial.
+	F -> {C}; //Estados finais.
+}
+
+// Descrĩção da máquina 2 cujo nome é M2.
+T10 {
+	E -> {A, B, C};  // Estados (1 ou mais símbolos).
+	T -> { (A, 0) = A, 
+		   (A, 1) = B, 
+		   (B, 0) = C, 
+		   (B, 1) = B, 
+		   (C, 0) = A, 
+		   (C, 1) = B }; // Transições.
+	i -> A; // Estado inicial.
+	F -> {C}; //Estados finais.
+}

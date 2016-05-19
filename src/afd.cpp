@@ -17,9 +17,9 @@ AFD::~AFD() {
 
 AFD::AFD(string nome, Estado *inicial) : nome(nome), inicial(inicial) {
 	this->estados = list<Estado*>();
-	this->estados.push_back(inicial);
-	this->transicoes = list<Transicao*>();
 	this->finais = list<Estado*>();
+	this->adicionaEstado(inicial);
+	this->transicoes = list<Transicao*>();
 }
 
 AFD::AFD(std::string nome, std::list<Estado*> estados, std::list<Transicao*> transicoes, Estado *estadoInicial, 
@@ -159,10 +159,15 @@ AFD* AFD::produto(AFD* m1, AFD* m2, Operacao op) {
 	inicial->e2 = m2->getInicial();
 	inicial->comp = new Estado(m1->getInicial()->getNome() + "," + m2->getInicial()->getNome());
 
+	if (op == INTERSECAO && inicial->e1->isFinal() && inicial->e2->isFinal())
+		inicial->comp->setFinal(true);
+	else if (op == UNIAO && (inicial->e1->isFinal() || inicial->e2->isFinal()))
+		inicial->comp->setFinal(true);
+
 	AFD *produto;
 	if (op == INTERSECAO)
 		produto = new AFD("intersecao", inicial->comp);
-	else
+	else if (op == UNIAO)
 		produto = new AFD("uniao", inicial->comp);
 
 	list<EstadoComposto*> novosEstados = list<EstadoComposto*>();
@@ -191,7 +196,7 @@ AFD* AFD::produto(AFD* m1, AFD* m2, Operacao op) {
 
 			if (op == INTERSECAO && novoEstado->e1->isFinal() && novoEstado->e2->isFinal())
 				novoEstado->comp->setFinal(true);
-			if (op == UNIAO && (novoEstado->e1->isFinal() || novoEstado->e2->isFinal()))
+			else if (op == UNIAO && (novoEstado->e1->isFinal() || novoEstado->e2->isFinal()))
 				novoEstado->comp->setFinal(true);
 
 			if (!produto->possuiEstado(novoEstado->comp)) {				

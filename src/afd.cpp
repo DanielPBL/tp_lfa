@@ -185,7 +185,7 @@ AFD* AFD::produto(AFD* m1, AFD* m2, Operacao op) {
 			novoEstado->e2 = eM2;
 			novoEstado->comp = new Estado(eM1->getNome() + "," + eM2->getNome());
 
-			if (novoEstado->comp->getNome() == ",") {
+			if (novoEstado->comp->getNome() == "," || novoEstado->comp->getNome() == "e',") {
 				if (!global::completo)
 					continue;
 				else {

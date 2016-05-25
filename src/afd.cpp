@@ -102,7 +102,7 @@ Estado* AFD::realizaTransicao(Estado *e, string sim) {
 	return new Estado("");
 }
 
-void AFD::gerarDot() {
+void AFD::gerarDot(bool estadoComposto) {
 	ofstream arq;
 	list<Estado*>::iterator iEst;
 	list<Transicao*>::iterator iTran;
@@ -114,13 +114,14 @@ void AFD::gerarDot() {
 
 	arq << "digraph \"" + this->nome + "\" {" << endl;
 	arq << "\t_nil [style=\"invis\"];" << endl;
-	arq << "\t_nil -> \"[" + this->inicial->getNome() + "]\" [label=\"\"];" << endl;
+	arq << "\t_nil -> \"" + string(estadoComposto ? "[" : "") + this->inicial->getNome() + string(estadoComposto ? "]" : "") + "\" [label=\"\"];" << endl;
 
 	for (iEst = this->finais.begin(); iEst != this->finais.end(); ++iEst)
-		arq << "\t\"[" + (*iEst)->getNome() + "]\" [peripheries=2];" << endl;
+		arq << "\t\"" + string(estadoComposto ? "[" : "") + (*iEst)->getNome() + string(estadoComposto ? "]" : "") + "\" [peripheries=2];" << endl;
 
 	for (iTran = this->transicoes.begin(); iTran != this->transicoes.end(); ++iTran) {
-		arq << "\t\"[" + (*iTran)->getPartida()->getNome() + "]\" -> \"[" + (*iTran)->getChegada()->getNome() + "]\" ";
+		arq << "\t\"" + string(estadoComposto ? "[" : "") + (*iTran)->getPartida()->getNome() + string(estadoComposto ? "]" : "") + "\"";
+		arq << " -> \"" + string(estadoComposto ? "[" : "") + (*iTran)->getChegada()->getNome() + string(estadoComposto ? "]" : "") + "\" ";
 		arq << "[label=" + (*iTran)->getSimbolo() + "];" << endl;
 	}
 

@@ -59,7 +59,7 @@ void AnalisadorSintatico::procPrograma() {
 	this->matchToken(FIM_ARQ_NORMAL);
 
 	for (it = global::maquinas.begin(); it != global::maquinas.end(); ++it) 
-		(*it)->gerarDot();
+		(*it)->gerarDot(false);
 
 	AFD *intersecao, *uniao;
 
@@ -73,8 +73,8 @@ void AnalisadorSintatico::procPrograma() {
 		uniao = AFD::uniao(uniao, *it);
 	}
 
-	intersecao->gerarDot();
-	uniao->gerarDot();
+	intersecao->gerarDot(true);
+	uniao->gerarDot(true);
 
 	for (it = global::maquinas.begin(); it != global::maquinas.end(); ++it) 
 		delete *it;

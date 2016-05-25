@@ -30,7 +30,7 @@ public:
 	void adicionaEstado(Estado*);
 	void adicionaTransicao(Transicao*);
 	Estado* realizaTransicao(Estado*, std::string);
-	void gerarDot();
+	void gerarDot(bool);
 	void setNome(std::string);
 	std::string getNome();
 	std::list<Estado*> getEstados();
